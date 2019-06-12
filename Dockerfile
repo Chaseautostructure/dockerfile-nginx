@@ -7,7 +7,7 @@
 # Pull base image.
 FROM nginx
 
-COPY index.html /usr/share/nginx/html 
+COPY html/ /usr/share/nginx/html 
 
 # Expose ports.
 EXPOSE 80
