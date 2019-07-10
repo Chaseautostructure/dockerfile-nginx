@@ -1,0 +1,8 @@
+version: 2
+jobs:
+Build:
+    docker:
+      # specify the version you desire here
+      - image: Chaseautostructure/dockerfile-nginx
+steps:
+    - sh "kubectl set image deployment/jenkins-eks-automated mike1=luther007/jenkins-eks-automated:$BUILD_NUMBER --kubeconfig=cluster-config"
