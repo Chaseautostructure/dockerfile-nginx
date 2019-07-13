@@ -1,40 +1,35 @@
+Version: 2.1
 
-    # Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: Chaseautostructure/dockerfile-nginx
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
-    working_directory: ~/repo
-
+  test-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          chase-cluster
+        type: string
     steps:
-      - checkout
-      - sh "kubectl set image deployment/circleci-eks-automated mike1=Chaseautostructure/circlci-eks-automated:$BUILD_NUMBER --kubeconfig=cluster-config"
-
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      - run: yarn install
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
-      - run: yarn test
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.chase-cluste >>
+      - run:
+          command: |
+            kubectl get services
+          name: Test cluster
+orbs:
+  aws-eks: circleci/aws-eks@0.1.0
+  kubernetes: circleci/kubernetes@0.3.0
+version: 2.1
+workflows:
+  deployment:
+    jobs:
+      - aws-eks/create-cluster:
+          cluster-name: chase-cluster
+      - test-cluster:
+          cluster-name: chase-cluster
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/delete-cluster:
+          cluster-name: chase-cluster
+          requires:
+            - test-cluster
