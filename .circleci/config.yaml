@@ -12,7 +12,7 @@ references:
     echo 'export dockerpass=${dockerpass}>>${BASH_ENV}'
 
 jobs:
-  build-docker-image:
+  build-docker-image&docker-push:
     docker:
       -image: luther007/cynerge_images:latest
     steps:
@@ -20,24 +20,23 @@ jobs:
       - *set_variables
       - run: docker login -u="${dockeruser}" -p="${dockerpass}"
       - run: docker build -t chasecynerge/nginx:latest
-  docker-push:
+      - run: docker push -t chasecynerge/nginx:latest
+  
+   
+  update-deployment-with-docker-image:
     docker:
     - image: luther007/cynerge_images:latest
-    steps:
-      - docker push -t chasecynerge/nginx:latest
-  update-deployment-with-docker-image:
-  docker:
-  - image: luther007/cynerge_images:latest
   steps: 
-    - docker pull chasecynerge -t chasecynerge/nginx:latest
+    - checkout
+    - *set_variables
+    - run: aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name cynerge
+    - run: kubectl set image deployment/chase-pipeline  nginx=chasecynerge:latest--record --namespace=chase
+
 workflows:
   version: 2.0
   update-deployment:
     jobs:
-      - build-docker-image:
-      - docker-push:
-        requires:
-        - build-docker-image
+      - build-docker-image&docker-push:
       -  update-deployment-with-docker-image:
          requires:
          - docker-push
