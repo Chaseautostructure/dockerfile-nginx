@@ -1,4 +1,4 @@
-version: 2.0
+version: 2
 
 references:
   set_variables: &set_variables
@@ -33,7 +33,7 @@ jobs:
       - run: kubectl set image deployment/chase-pipeline  nginx=chasecynerge:latest--record --namespace=chase
 
 workflows:
-  version: 2.0
+  version: 2
   update-deployment:
     jobs:
     - build-docker-image&docker-push
