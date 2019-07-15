@@ -14,7 +14,7 @@ references:
 jobs:
   build-docker-image&docker-push:
     docker:
-      -image: luther007/cynerge_images:latest
+      - image: luther007/cynerge_images:latest
     steps:
       - checkout
       - *set_variables
@@ -25,12 +25,12 @@ jobs:
    
   update-deployment-with-docker-image:
     docker:
-    - image: luther007/cynerge_images:latest
-  steps: 
-    - checkout
-    - *set_variables
-    - run: aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name=cynerge
-    - run: kubectl set image deployment/chase-pipeline  nginx=chasecynerge:latest--record --namespace=chase
+      - image: luther007/cynerge_images:latest
+    steps: 
+      - checkout
+      - *set_variables
+      - run: aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name=cynerge
+      - run: kubectl set image deployment/chase-pipeline  nginx=chasecynerge:latest--record --namespace=chase
 
 workflows:
   version: 2.0
@@ -39,4 +39,4 @@ workflows:
       - build-docker-image&docker-push:
       -  update-deployment-with-docker-image:
          requires:
-         - docker-push
+          - build-docker-image&docker-push
