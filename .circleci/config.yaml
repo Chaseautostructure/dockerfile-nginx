@@ -22,12 +22,12 @@ jobs:
       - run: docker build -t chasecynerge/nginx:latest
   docker-push:
     docker:
-    -image: luther007/cynerge_images:latest
+    - image: luther007/cynerge_images:latest
     steps:
       - docker push -t chasecynerge/nginx:latest
   update-deployment-with-docker-image:
   docker:
-  -image: luther007/cynerge_images:latest
+  - image: luther007/cynerge_images:latest
   steps: 
     - docker pull chasecynerge -t chasecynerge/nginx:latest
 workflows:
