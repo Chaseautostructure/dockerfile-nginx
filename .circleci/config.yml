@@ -19,7 +19,7 @@ jobs:
       - checkout
       - *set_variables
       - run: docker login -u="${dockeruser}" -p="${dockerpass}"
-      - run: docker build -t . chasecynerge/nginx:latest
+      - run: docker build -t chasecynerge/nginx:latest
       - run: docker push chasecynerge/nginx:latest
   
    
