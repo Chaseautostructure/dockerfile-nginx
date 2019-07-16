@@ -20,7 +20,7 @@ jobs:
       - setup_remote_docker
       - *set_variables
       - run: docker login -u="${dockeruser}" -p="${dockerpass}"
-      - run: docker build --tag chasecynerge/nginx . :latest
+      - run: docker build --tag chasecynerge/nginx .
       - run: docker push chasecynerge/nginx:latest
   
    
