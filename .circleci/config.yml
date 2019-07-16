@@ -30,7 +30,7 @@ jobs:
     steps: 
       - checkout
       - *set_variables
-      - run: aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name=cynerge
+      - run: aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name= cynerge
       - run: kubectl set image deployment/chase-pipeline  nginx=chasecynerge:latest--record --namespace=chase
 
 workflows:
